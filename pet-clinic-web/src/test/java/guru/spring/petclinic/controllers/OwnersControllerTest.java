@@ -18,10 +18,12 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @ExtendWith(MockitoExtension.class)
-class OwnerControllerTest {
+class OwnersControllerTest {
 
   @Mock
   OwnerService ownerService;
@@ -55,6 +57,16 @@ class OwnerControllerTest {
 
   @Test
   void listOwners() throws Exception {
+    when(ownerService.findAll()).thenReturn(owners);
+
+    mockMvc.perform(get("/owners"))
+        .andExpect(status().isOk())
+        .andExpect(view().name("owners/index"))
+        .andExpect(model().attribute("owners", hasSize(2)));
+  }
+
+  @Test
+  void listOwnersByIndex() throws Exception {
     when(ownerService.findAll()).thenReturn(owners);
 
     mockMvc.perform(get("/owners/index"))
